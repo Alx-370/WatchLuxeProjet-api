@@ -5,6 +5,7 @@ import com.watchlux.dao.OrderDao;
 import com.watchlux.dao.OrderItemDao;
 import com.watchlux.dao.ProductDao;
 import com.watchlux.exception.InsufficientStockException;
+import com.watchlux.exception.ResourceNotFoundException;
 import com.watchlux.model.Customer;
 import com.watchlux.model.Order;
 import com.watchlux.model.OrderItem;
@@ -36,21 +37,21 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Transactional
     public void checkout(String email, List<OrderItem> items) {
         Customer customer = customerDao.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Client non trouvé avec cet email : " + email));
+                .orElseThrow(() -> new ResourceNotFoundException("Client non trouvé avec cet email : " + email));
 
         for (OrderItem item : items) {
             Product product = productDao.findById(item.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Produit introuvable, id=" + item.getProductId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Produit introuvable, id=" + item.getProductId()));
 
             if (product.getStock() < item.getQuantity()) {
                 throw new InsufficientStockException("Stock insuffisant pour le produit : " + product.getName());
             }
         }
+
         Order order = new Order();
         order.setCustomerId(customer.getId());
         order.setOrderDate(LocalDateTime.now());
         orderDao.save(order);
-
 
         for (OrderItem item : items) {
             item.setOrderId(order.getId());
@@ -61,4 +62,5 @@ public class CheckoutServiceImpl implements CheckoutService {
             productDao.update(product);
         }
     }
+
 }
