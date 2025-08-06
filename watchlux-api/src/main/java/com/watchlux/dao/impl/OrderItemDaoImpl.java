@@ -18,12 +18,12 @@ public class OrderItemDaoImpl implements OrderItemDao {
     }
 
     private final RowMapper<OrderItem> orderItemMapper = (rs, rowNum) -> {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setId(rs.getInt("id"));
-        orderItem.setOrderId(rs.getInt("order_id"));
-        orderItem.setProductId(rs.getInt("product_id"));
-        orderItem.setQuantity(rs.getInt("quantity"));
-        return orderItem;
+        OrderItem item = new OrderItem();
+        item.setId(rs.getInt("id"));
+        item.setOrderId(rs.getInt("order_id"));
+        item.setProductId(rs.getInt("product_id"));
+        item.setQuantity(rs.getInt("quantity"));
+        return item;
     };
 
     @Override
@@ -38,5 +38,11 @@ public class OrderItemDaoImpl implements OrderItemDao {
     public List<OrderItem> findByOrderId(int orderId) {
         String sql = "SELECT * FROM order_item WHERE order_id = ?";
         return jdbcTemplate.query(sql, orderItemMapper, orderId);
+    }
+
+    @Override
+    public void deleteByOrderId(int orderId) {
+        String sql = "DELETE FROM order_item WHERE order_id = ?";
+        jdbcTemplate.update(sql, orderId);
     }
 }

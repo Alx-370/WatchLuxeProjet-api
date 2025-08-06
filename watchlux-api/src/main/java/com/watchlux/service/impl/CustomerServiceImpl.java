@@ -5,6 +5,7 @@ import com.watchlux.model.Customer;
 import com.watchlux.service.CustomerService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,7 +28,22 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void register(Customer customer) {
+    public void save(Customer customer) {
         customerDao.save(customer);
+    }
+
+    @Override
+    public void update(Customer customer) {
+        customerDao.update(customer);
+    }
+
+    @Override
+    public void deleteById(int id) {
+        customerDao.deleteById(id);
+    }
+
+    @Override
+    public List<Customer> findAll() {
+        return customerDao.findAll();
     }
 }
