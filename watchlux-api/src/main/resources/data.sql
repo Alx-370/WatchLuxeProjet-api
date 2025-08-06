@@ -2,8 +2,8 @@ USE watchlux;
 
 -- Insertion de clients
 INSERT INTO customer (email, name, password, role) VALUES
-('alice@example.com', 'Alice Dupont', 'password_hash_1', 'ROLE_USER'),
-('bob@example.com', 'Bob Martin', 'password_hash_2', 'ROLE_ADMIN');
+('alice@example.com', 'Alice Dupont', '$2a$10$TrfL8F7/1fR6eUeT8lt2he1bUQ/2fy4O7nXxG6.jM.m1Z.Kny1G3a', 'ROLE_USER'),
+('bob@example.com', 'Bob Martin', '$2a$10$jdQ4oM48XANv6nt.P8WDLu9f4uy3PxhxNdyJh0kUpO3K77IqoHyMi', 'ROLE_ADMIN');
 
 -- Insertion de produits
 INSERT INTO product (name, description, price, stock, image) VALUES
