@@ -5,7 +5,6 @@ import com.watchlux.dao.OrderDao;
 import com.watchlux.dao.OrderItemDao;
 import com.watchlux.dao.ProductDao;
 import com.watchlux.exception.InsufficientStockException;
-import com.watchlux.exception.ResourceNotFoundException;
 import com.watchlux.model.Customer;
 import com.watchlux.model.Order;
 import com.watchlux.model.OrderItem;
@@ -21,51 +20,45 @@ import java.util.List;
 public class CheckoutServiceImpl implements CheckoutService {
 
     private final CustomerDao customerDao;
-    private final ProductDao productDao;
     private final OrderDao orderDao;
     private final OrderItemDao orderItemDao;
+    private final ProductDao productDao;
 
-    public CheckoutServiceImpl(CustomerDao customerDao, ProductDao productDao,
-                               OrderDao orderDao, OrderItemDao orderItemDao) {
+    public CheckoutServiceImpl(CustomerDao customerDao, OrderDao orderDao,
+                               OrderItemDao orderItemDao, ProductDao productDao) {
         this.customerDao = customerDao;
-        this.productDao = productDao;
         this.orderDao = orderDao;
         this.orderItemDao = orderItemDao;
+        this.productDao = productDao;
     }
 
     @Override
     @Transactional
     public void checkout(String email, List<OrderItem> items) {
-        Customer customer = customerDao.findByEmail(email);
-        if (customer == null) {
-            customer = new Customer();
-            customer.setEmail(email);
-            customerDao.save(customer);
-        }
+        Customer customer = customerDao.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Client non trouvé avec cet email : " + email));
 
         for (OrderItem item : items) {
-            Product product = productDao.findById(item.getProductId());
-            if (product == null) {
-                throw new ResourceNotFoundException("Produit non trouvé avec ID : " + item.getProductId());
-            }
+            Product product = productDao.findById(item.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Produit introuvable, id=" + item.getProductId()));
+
             if (product.getStock() < item.getQuantity()) {
                 throw new InsufficientStockException("Stock insuffisant pour le produit : " + product.getName());
             }
-
-            product.setStock(product.getStock() - item.getQuantity());
-            productDao.update(product);
-
-            item.setPrice(product.getPrice());
         }
-
         Order order = new Order();
         order.setCustomerId(customer.getId());
         order.setOrderDate(LocalDateTime.now());
         orderDao.save(order);
 
+
         for (OrderItem item : items) {
             item.setOrderId(order.getId());
+            orderItemDao.saveAll(List.of(item));
+
+            Product product = productDao.findById(item.getProductId()).get();
+            product.setStock(product.getStock() - item.getQuantity());
+            productDao.update(product);
         }
-        orderItemDao.saveAll(items);
     }
 }

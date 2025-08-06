@@ -4,10 +4,11 @@ import com.watchlux.dao.OrderDao;
 import com.watchlux.model.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import java.util.List;
 
 @Repository
@@ -30,7 +31,19 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public void save(Order order) {
         String sql = "INSERT INTO orders (order_date, customer_id) VALUES (?, ?)";
-        jdbcTemplate.update(sql, order.getOrderDate(), order.getCustomerId());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] { "id" });
+            ps.setObject(1, order.getOrderDate());
+            ps.setInt(2, order.getCustomerId());
+            return ps;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+        if (key != null) {
+            order.setId(key.intValue());
+        }
     }
 
     @Override
