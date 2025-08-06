@@ -1,6 +1,7 @@
 package com.watchlux.model;
 
 import lombok.*;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -9,7 +10,7 @@ public class Product {
     private Integer id;
     private String name;
     private String description;
-    private Double price;
+    private BigDecimal price;
     private Integer stock;
     private String image;
 }
