@@ -7,9 +7,9 @@ INSERT INTO customer (email, name, password, role) VALUES
 
 -- Insertion de produits
 INSERT INTO product (name, description, price, stock, image) VALUES
-('Montre Classic', 'Montre classique élégante', 199.99, 10, 'https://exemple.com/images/classic.jpg'),
-('Montre Sport', 'Montre sport avec chronomètre', 249.50, 5, 'https://exemple.com/images/sport.jpg'),
-('Montre Luxe', 'Montre de luxe en or', 9999.99, 2, 'https://exemple.com/images/luxe.jpg');
+('Montre Classic', 'Montre classique élégante', 199.99, 10, 'https://verygoodlord.com/wp-content/uploads/2024/03/1-montre-contemporary-ra-ac0e04l-orient.jpg'),
+('Montre Sport', 'Montre sport avec chronomètre', 249.50, 5, 'https://www.bracelets-tendances.fr/wp-content/uploads/2022/03/montre-acier-chrono-sport-lunette-bleue-cadran-gris-homme-600x600.jpg'),
+('Montre Luxe', 'Montre de luxe en or', 9999.99, 2, 'https://medias.collectorsquare.com/images/products/412951/00pp-g-montre-rolex-daytona-automatique-en-or-jaune-ref-rolex-116588saco-vers-2019.jpg');
 
 -- Insertion de commandes
 INSERT INTO orders (order_date, customer_id) VALUES
