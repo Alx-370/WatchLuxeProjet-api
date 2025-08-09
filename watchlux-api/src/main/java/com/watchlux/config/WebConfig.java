@@ -1,3 +1,4 @@
+
 package com.watchlux.config;
 
 import org.springframework.context.annotation.Bean;

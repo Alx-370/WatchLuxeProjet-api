@@ -1,15 +1,16 @@
+
 package com.watchlux.controller;
 
-import com.watchlux.model.Order;
+import com.watchlux.dto.CheckoutRequest;
+import com.watchlux.dto.OrderDTO;
 import com.watchlux.service.OrderService;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/orders")
-@CrossOrigin
+@RequestMapping("/api")
 public class OrderController {
 
     private final OrderService orderService;
@@ -18,16 +19,18 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @GetMapping("/by-email/{email}")
-    public ResponseEntity<List<Order>> getOrdersByEmail(@PathVariable String email) {
-        List<Order> orders = orderService.getOrdersByCustomerEmail(email);
-        return ResponseEntity.ok(orders);
+    @PostMapping("/checkout")
+    public OrderDTO checkout(@Valid @RequestBody CheckoutRequest req) {
+        return orderService.checkout(req);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Order>> getAll() {
-        List<Order> orders = orderService.getAllOrders();
-        return ResponseEntity.ok(orders);
+    @GetMapping("/orders")
+    public List<OrderDTO> listByEmail(@RequestParam String email) {
+        return orderService.listByEmail(email);
     }
 
+    @GetMapping("/admin/orders")
+    public List<OrderDTO> listAll() {
+        return orderService.listAll();
+    }
 }

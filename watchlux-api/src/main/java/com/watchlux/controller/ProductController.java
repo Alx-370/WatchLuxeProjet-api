@@ -1,51 +1,38 @@
+
 package com.watchlux.controller;
 
-import com.watchlux.model.Product;
+import com.watchlux.dto.ProductDTO;
 import com.watchlux.service.ProductService;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductService service;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    public ProductController(ProductService service) { this.service = service; }
 
     @GetMapping
-    public List<Product> getAll() {
-        return productService.getAllProducts();
+    public List<ProductDTO> list(@RequestParam(value = "q", required = false) String q) {
+        return service.list(q);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getById(@PathVariable int id) {
-        return productService.getProductById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+    @GetMapping("{id}")
+    public ProductDTO get(@PathVariable Long id) { return service.get(id); }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody Product product) {
-        productService.addProduct(product);
-        return ResponseEntity.ok("Produit créé avec succès");
-    }
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductDTO create(@Valid @RequestBody ProductDTO dto) { return service.create(dto); }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable int id, @RequestBody Product product) {
-        product.setId(id);
-        productService.updateProduct(product);
-        return ResponseEntity.ok("Produit mis à jour avec succès");
-    }
+    @PutMapping("{id}")
+    public ProductDTO update(@PathVariable Long id, @Valid @RequestBody ProductDTO dto) { return service.update(id, dto); }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable int id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.ok("Produit supprimé avec succès");
-    }
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) { service.delete(id); }
 }
