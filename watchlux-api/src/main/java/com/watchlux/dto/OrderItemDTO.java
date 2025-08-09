@@ -1,0 +1,16 @@
+
+package com.watchlux.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class OrderItemDTO {
+    private Long productId;
+    private String name;
+    private double unitPrice;
+    private int quantity;
+}
